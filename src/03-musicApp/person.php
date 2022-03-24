@@ -1,7 +1,7 @@
 <?hh
 
 namespace LearnHH\MusicApp\Person {
-    use HH\Lib\{C, Str};
+    use namespace HH\Lib\{C, Str};
 
     type IName = shape(
         'firstName' => ?string,
@@ -10,7 +10,7 @@ namespace LearnHH\MusicApp\Person {
     );
 
     function create_name(string $fullName): IName {
-        $vec = Str\split($fullName, '\s');
+        $vec = Str\split($fullName, ' ');
         if (C\count($vec) === 2) {
             return shape(
                 'fullName' => $fullName,

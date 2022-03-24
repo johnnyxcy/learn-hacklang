@@ -12,7 +12,7 @@ namespace LearnHH\MusicApp {
     function main(): void {
         $programmer =
             new Programmer('Bjarne Stroustrup', new \DateTime('1950-12-30'));
-        echo $programmer->getFullName().
+        echo $programmer->getName()['lastName'].
             ' is '.
             (string)$programmer->getAge().
             ' years old'.
