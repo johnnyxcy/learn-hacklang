@@ -20,7 +20,7 @@ namespace LearnHH {
                     \LearnHH\Collections\main();
                     break;
                 case 'musicApp':
-                    \LearnHH\MusicApp\main();
+                    \HH\Asio\join(\LearnHH\MusicApp\main());
                     break;
                 default:
                     throw new \Exception("Not Implemented", 1);

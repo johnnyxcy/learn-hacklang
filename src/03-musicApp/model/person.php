@@ -1,6 +1,6 @@
 <?hh
 
-namespace LearnHH\MusicApp\Person {
+namespace LearnHH\MusicApp\Model\Person {
     use namespace HH\Lib\{C, Str};
 
     type IName = shape(
@@ -26,14 +26,7 @@ namespace LearnHH\MusicApp\Person {
         }
     }
 
-    interface IPerson {
-        public function getName(): IName;
-        public function getFullName(): string;
-        public function getAge(): int;
-        public function getBirthday(): \DateTimeImmutable;
-    }
-
-    abstract class AbstractPerson implements IPerson {
+    abstract class AbstractPerson {
         private IName $name;
         public function __construct(
             string $fullName,
@@ -59,5 +52,13 @@ namespace LearnHH\MusicApp\Person {
         public final function getBirthday(): \DateTimeImmutable {
             return \DateTimeImmutable::createFromMutable($this->birthday);
         }
+    }
+
+    trait PersonTrait {
+        require extends AbstractPerson;
+    }
+
+    interface IPerson {
+        require extends AbstractPerson;
     }
 }

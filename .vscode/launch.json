@@ -1,0 +1,11 @@
+{
+    "configurations": [
+    {
+        "name": "HHVM: Run Script",
+        "type": "hhvm",
+        "request": "launch",
+        "script": "${workspaceFolder}/index.php musicApp",
+        "cwd": "${workspaceFolder}"
+    }
+    ]
+}

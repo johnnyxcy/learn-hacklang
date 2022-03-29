@@ -1,7 +1,7 @@
 <?hh
 
 namespace LearnHH\MusicApp\Common {
-    type TimeLength = shape('minute' => int, 'second' => int);
+    type TimeDelta = shape('minute' => int, 'second' => int);
 
     enum Language: string {
         CN = 'Chinese';
