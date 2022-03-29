@@ -8,9 +8,9 @@ namespace LearnHH\MusicApp {
     //     }
     // }
     use namespace LearnHH\MusicApp\Services\DB\Connection;
-    use namespace HH\Lib\{Str, SQL};
+    use namespace HH\Lib\{SQL, Str};
 
-    async function main(): Awaitable<void> {
+    async function main_async(): Awaitable<void> {
         $stdin = \fopen('php://stdin', 'r');
         print('MySQL port = ');
         $port = (int)Str\trim(\stream_get_line($stdin));
