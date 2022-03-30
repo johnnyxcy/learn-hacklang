@@ -105,3 +105,20 @@ Q：现在 WSL 中的 hhvm 开发环境配置完成了，需要提供 ssh 登陆
 2. 端口异常
 
 - 如果 `${WINDOWS_PORT}` 和 `${SSH_PORT}` 端口号一样的话也会出现这个问题，建议设为不同的端口号防止访问冲突
+
+## Naming Convention
+
+根据学习 HSL 的源码了解到命名规范如下
+
+1. 类名使用 Pascal Case
+2. 类方法 / 实例方法使用 Camel Case
+3. 包含有类实现的文件名使用 Pascal Case
+
+**NOTE** 上述"类"包括了 `class`, `interface`, `trait`
+
+4. Namespace 使用 Pascal Case
+    - Namespace 的名字 generally 符合文件夹名称
+5. global 函数使用 Snake Case
+6. 代码段中的临时变量使用 Snake Case
+7. 包含有 global 函数的文件名使用 Snake Case
+8. Async 函数的函数名要取名为 someFunctionAsync （类函数）和 some_function_async (global 函数)
