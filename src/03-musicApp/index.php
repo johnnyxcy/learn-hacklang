@@ -7,7 +7,7 @@ namespace LearnHH\MusicApp {
     //         echo 'Hello I\'m programmer.'.\PHP_EOL;
     //     }
     // }
-    use namespace LearnHH\MusicApp\Services\DB\Connection;
+    use namespace LearnHH\MusicApp\Services\DB;
     use namespace HH\Lib\{SQL, Str};
 
     async function main_async(): Awaitable<void> {
@@ -18,15 +18,13 @@ namespace LearnHH\MusicApp {
         $user = Str\trim(\stream_get_line($stdin));
         print('MySQL passwd for '.$user.' = ');
         $passwd = Str\trim(\stream_get_line($stdin));
-        using (
-            $db = new Connection\DBConnectionService($port, $user, $passwd)
-        ) {
-            await $db->connectAsync('mysql');
-            if ($db->isConnected('mysql')) {
-                $result = await $db->get('mysql')
+        using ($client = new DB\ConnectionManager($port, $user, $passwd)) {
+            await $client->connectAsync('mysql');
+            if ($client->isConnected('mysql')) {
+                $result = await $client->get('mysql')
                     ->queryAsync(new SQL\Query('SELECT User from mysql.user'));
-                foreach ($result->mapRows() as $rowIndex => $mapping) {
-                    print($rowIndex.',');
+                foreach ($result->mapRows() as $row_index => $mapping) {
+                    print($row_index.',');
                     if ($mapping) {
                         foreach ($mapping as $key => $val) {
                             print($key.','.$val);
