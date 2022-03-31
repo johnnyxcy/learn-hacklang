@@ -1,14 +1,9 @@
 <?hh
 
 namespace LearnHH\MusicApp {
-
-    // class Programmer extends Person\AbstractPerson {
-    //     public function helloWorld(): void {
-    //         echo 'Hello I\'m programmer.'.\PHP_EOL;
-    //     }
-    // }
-    use namespace LearnHH\MusicApp\Services\DB;
-    use namespace HH\Lib\{SQL, Str};
+    use namespace LearnHH\MusicApp\Model;
+    use namespace LearnHH\MusicApp\Service\DB;
+    use namespace HH\Lib\Str;
 
     async function main_async(): Awaitable<void> {
         $stdin = \fopen('php://stdin', 'r');
@@ -18,28 +13,17 @@ namespace LearnHH\MusicApp {
         $user = Str\trim(\stream_get_line($stdin));
         print('MySQL passwd for '.$user.' = ');
         $passwd = Str\trim(\stream_get_line($stdin));
-        using ($client = new DB\ConnectionManager($port, $user, $passwd)) {
-            await $client->connectAsync('mysql');
-            if ($client->isConnected('mysql')) {
-                $result = await $client->get('mysql')
-                    ->queryAsync(new SQL\Query('SELECT User from mysql.user'));
-                foreach ($result->mapRows() as $row_index => $mapping) {
-                    print($row_index.',');
-                    if ($mapping) {
-                        foreach ($mapping as $key => $val) {
-                            print($key.','.$val);
-                        }
-                    }
-                    print(\PHP_EOL);
-                }
-            }
+        $client = new DB\ConnectionManager($port, $user, $passwd);
+        $music_db = new DB\MusicDBService($client);
+        await $music_db->isReadyAsync();
+        $song_title = '晚安昨日';
+        $success = await $music_db->songsTableService()->updateSongAsync(
+            new Model\Song($song_title, '', 310, 'Good night yesterday'),
+        );
+
+        $songs_vec = await $music_db->songsTableService()->getAllSongsAsync();
+        foreach ($songs_vec as $_ => $song) {
+            print($song->getTitle().\PHP_EOL);
         }
-        // $programmer =
-        //     new Programmer('Bjarne Stroustrup', new \DateTime('1950-12-30'));
-        // echo $programmer->getName()['lastName'].
-        //     ' is '.
-        //     (string)$programmer->getAge().
-        //     ' years old'.
-        //     \PHP_EOL;
     }
 }

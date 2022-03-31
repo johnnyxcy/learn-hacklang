@@ -1,10 +1,10 @@
 <?hh
 
-namespace LearnHH\MusicApp\Services\DB {
+namespace LearnHH\MusicApp\Service\DB {
 
     use namespace HH\Lib\{C};
 
-    interface IConnectionManager extends \IDisposable {
+    interface IConnectionManager {
         public function connectAsync(string $dbname): Awaitable<void>;
         public function disconnect(string $dbname): void;
         public function isConnected(string $dbname): bool;
@@ -19,12 +19,6 @@ namespace LearnHH\MusicApp\Services\DB {
             private string $password,
         ) {
             $this->connection_mapping = dict[];
-        }
-
-        public function __dispose(): void {
-            foreach ($this->connection_mapping as $_ => $connection) {
-                $connection->close();
-            }
         }
 
         public async function connectAsync(string $dbname): Awaitable<void> {
@@ -51,13 +45,6 @@ namespace LearnHH\MusicApp\Services\DB {
 
         public function get(string $dbname): \AsyncMysqlConnection {
             return $this->connection_mapping[$dbname];
-        }
-    }
-
-    trait SQLTrait {
-        private \AsyncMysqlConnection $sql;
-        public function __construct(\AsyncMysqlConnection $connection) {
-            $this->sql = $connection;
         }
     }
 }

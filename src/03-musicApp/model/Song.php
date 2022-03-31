@@ -7,21 +7,24 @@ namespace LearnHH\MusicApp\Model {
         public function getUID(): string;
         public function getDataUri(): string;
         public function getTitle(): string;
-        public function getTotalLength(): Common\TimeDelta;
+        public function getTotalLength(): int;
         public function getLyrics(): string;
         public function getLanguage(): Common\Language;
     }
 
     class Song implements ISong {
         private string $uuid;
+        private Common\Language $language;
         public function __construct(
             private string $title,
             private string $data_uri,
-            private Common\TimeDelta $time_length,
+            private int $time_length,
             private string $lyrics,
-            private Common\Language $language = Common\Language::CN,
+            ?Common\Language $language = null,
+            ?string $uuid = null,
         ) {
-            $this->uuid = generate_uuid();
+            $this->language = $language ?? Common\string_to_language('Chinese');
+            $this->uuid = $uuid ?? generate_uuid();
         }
 
         public function getUID(): string {
@@ -36,7 +39,7 @@ namespace LearnHH\MusicApp\Model {
             return $this->title;
         }
 
-        public function getTotalLength(): Common\TimeDelta {
+        public function getTotalLength(): int {
             return $this->time_length;
         }
 
