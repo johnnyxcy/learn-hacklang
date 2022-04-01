@@ -1,23 +1,31 @@
 <?hh
 
 namespace LearnHH\MusicApp\Service\DB {
+    use namespace HH\Lib\{C, Vec};
     use type LearnHH\MusicApp\Service\DB\Tables\{
+        ISingerSongRelsTableService,
+        ISingersTableService,
         ISongsTableService,
-        SongsTableService,
+        SingerSongRelsTableImpl,
+        SingersTableServiceImpl,
+        SongsTableServiceImpl,
     };
 
     interface IMusicDBService {
         public function isReadyAsync(): Awaitable<bool>;
-        public function songsTableService(): ISongsTableService;
-        // public function songsTableService(): Tables\ISongsTableService;
+        public function songs(): ISongsTableService;
+        public function singers(): ISingersTableService;
+        public function rels(): ISingerSongRelsTableService;
     }
 
     class MusicDBService implements IMusicDBService {
-        private Awaitable<bool> $_isReady;
-        private ?ISongsTableService $_songsTableService;
+        private Awaitable<bool> $is_ready;
+        private ?ISongsTableService $_songs;
+        private ?ISingersTableService $_singer;
+        private ?ISingerSongRelsTableService $_rels;
 
         public function __construct(private IConnectionManager $manager) {
-            $this->_isReady = $this->initAsync();
+            $this->is_ready = $this->initAsync();
         }
 
         private async function initAsync(): Awaitable<bool> {
@@ -32,25 +40,61 @@ namespace LearnHH\MusicApp\Service\DB {
 
             await $this->manager->connectAsync('music');
 
-            $this->_songsTableService =
-                new SongsTableService($this->manager->get('music'));
+            $this->_songs =
+                new SongsTableServiceImpl($this->manager->get('music'));
+            await $this->_songs->isReadyAsync();
 
-            if (!await $this->_songsTableService->isReadyAsync()) {
-                throw new \Exception('Songs Table Service is not Ready');
-            }
+            $this->_singer =
+                new SingersTableServiceImpl($this->manager->get('music'));
+            await $this->_singer->isReadyAsync();
+
+            $this->_rels =
+                new SingerSongRelsTableImpl($this->manager->get('music'));
+            await $this->_rels->isReadyAsync();
+
+            // NOTE: Cannot do this asio beacuase connection can only query once a time
+            // $all_ready = await \HH\Asio\v(vec[
+            //     ($this->_songs as ISongsTableService)->isReadyAsync(),
+            //     ($this->_singer as ISingersTableService)->isReadyAsync(),
+            //     ($this->_rels as ISingerSongRelsTableService)->isReadyAsync(),
+            // ]);
+
+            // $partition_tuple =
+            //     Vec\partition($all_ready, $is_ready ==> $is_ready);
+
+            // if (C\count($partition_tuple[0]) !== C\count($all_ready)) {
+            //     return false;
+            // }
 
             return true;
         }
 
         public function isReadyAsync(): Awaitable<bool> {
-            return $this->_isReady;
+            return $this->is_ready;
         }
 
-        public function songsTableService(): ISongsTableService {
-            if ($this->_songsTableService is null) {
-                throw new \Exception('Not Initialized yet');
+        public function singers(): ISingersTableService {
+            if ($this->_singer is null) {
+                throw new \Exception();
             }
-            return $this->_songsTableService;
+
+            return $this->_singer;
+        }
+
+        public function songs(): ISongsTableService {
+            if ($this->_songs is null) {
+                throw new \Exception();
+            }
+
+            return $this->_songs;
+        }
+
+        public function rels(): ISingerSongRelsTableService {
+            if ($this->_rels is null) {
+                throw new \Exception();
+            }
+
+            return $this->_rels;
         }
     }
 }

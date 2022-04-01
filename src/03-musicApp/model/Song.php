@@ -27,6 +27,10 @@ namespace LearnHH\MusicApp\Model {
             $this->uuid = $uuid ?? generate_uuid();
         }
 
+        public function __toString(): string {
+            return 'Song<'.$this->title.'>';
+        }
+
         public function getUID(): string {
             return $this->uuid;
         }

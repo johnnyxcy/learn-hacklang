@@ -1,7 +1,7 @@
 <?hh
 
 namespace LearnHH\MusicApp\Model {
-    abstract class AbstractPerson {
+    class Person {
         public function __construct(
             private string $name,
             private \DateTime $birthday,
@@ -22,11 +22,12 @@ namespace LearnHH\MusicApp\Model {
         }
     }
 
-    trait PersonTrait {
-        require extends AbstractPerson;
+    interface IPerson {
+        require extends Person;
     }
 
-    interface IPerson {
-        require extends AbstractPerson;
+    trait PersonTrait {
+        require extends Person;
+        require implements IPerson;
     }
 }

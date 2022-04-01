@@ -4,37 +4,9 @@ namespace LearnHH\MusicApp\Service\DB\Tables {
     use namespace LearnHH\MusicApp\{Common, Model};
     use namespace HH\Lib\C;
 
-    interface ISongsTableService {
-        public function isReadyAsync(): Awaitable<bool>;
-        public function getAllSongsAsync(): Awaitable<vec<Model\ISong>>;
-        public function getSongAsync(string $song_uid): Awaitable<Model\ISong>;
-        public function removeSongAsync(string $song_uid): Awaitable<bool>;
-        public function updateSongAsync(Model\ISong $song): Awaitable<bool>;
-    }
+    class SongsTableServiceImpl implements ISongsTableService {
 
-    class SongsTableService implements ISongsTableService {
-        private \AsyncMysqlConnection $db;
-        private Awaitable<bool> $_isReady;
-        public function __construct(\AsyncMysqlConnection $db) {
-            $this->db = $db;
-            // UID, Title, DataUri, TimeLength, Lyrics, Language
-            $this->_isReady = (
-                async () ==> {
-                    await $this->db
-                        ->query(
-                            'CREATE TABLE IF NOT EXISTS music.songs ('.
-                            'UID VARCHAR(40) NOT NULL,'.
-                            'Title VARCHAR(200) NOT NULL,'.
-                            'DataUri VARCHAR(100) NOT NULL,'.
-                            'TimeLength INT NOT NULL,'.
-                            'Lyrics VARCHAR(20000),'.
-                            'Language VARCHAR(10),'.
-                            'PRIMARY KEY (UID)) DEFAULT CHARSET=utf8;',
-                        );
-                    return true;
-                }
-            )();
-        }
+        use _Private\TableSerivceT<Model\ISong>;
 
         protected static function queryResultToModel(
             Map<string, ?string> $query_d,
@@ -80,11 +52,22 @@ namespace LearnHH\MusicApp\Service\DB\Tables {
             );
         }
 
-        public function isReadyAsync(): Awaitable<bool> {
-            return $this->_isReady;
+        <<__Override>>
+        public final async function initTableAsync(): Awaitable<void> {
+            await $this->db
+                ->query(
+                    'CREATE TABLE IF NOT EXISTS music.songs ('.
+                    'UID VARCHAR(40) NOT NULL,'.
+                    'Title VARCHAR(200) NOT NULL,'.
+                    'DataUri VARCHAR(100) NOT NULL,'.
+                    'TimeLength INT NOT NULL,'.
+                    'Lyrics VARCHAR(20000),'.
+                    'Language VARCHAR(10),'.
+                    'PRIMARY KEY (UID)) DEFAULT CHARSET=utf8;',
+                );
         }
 
-        public async function getAllSongsAsync(): Awaitable<vec<Model\ISong>> {
+        public async function getAllAsync(): Awaitable<vec<Model\ISong>> {
             $songs = vec[];
             foreach (
                 (
@@ -101,7 +84,7 @@ namespace LearnHH\MusicApp\Service\DB\Tables {
             return $songs;
         }
 
-        public async function getSongAsync(
+        public async function getAsync(
             string $song_uid,
         ): Awaitable<Model\ISong> {
             $query_result_rows = (
@@ -119,9 +102,7 @@ namespace LearnHH\MusicApp\Service\DB\Tables {
             }
         }
 
-        public async function removeSongAsync(
-            string $song_uid,
-        ): Awaitable<bool> {
+        public async function removeAsync(string $song_uid): Awaitable<bool> {
             try {
                 await $this->db
                     ->queryf('DELETE FROM music.songs WHERE UID=%s', $song_uid);
@@ -131,9 +112,7 @@ namespace LearnHH\MusicApp\Service\DB\Tables {
             }
         }
 
-        public async function updateSongAsync(
-            Model\ISong $song,
-        ): Awaitable<bool> {
+        public async function updateAsync(Model\ISong $song): Awaitable<bool> {
             try {
                 // Title, DataUri, TimeLength, Lyric, Language
                 await $this->db
