@@ -122,3 +122,7 @@ Q：现在 WSL 中的 hhvm 开发环境配置完成了，需要提供 ssh 登陆
 6. 代码段中的临时变量使用 Snake Case
 7. 包含有 global 函数的文件名使用 Snake Case
 8. Async 函数的函数名要取名为 someFunctionAsync （类函数）和 some_function_async (global 函数)
+
+## Autoload
+
+在开发过程中偶尔会出现 lint 通过但是无法正确执行的情况，报错 `Fatal error: Undefined interface` / `Fatal error: Unknown trait`，这应该是 Autoload 没有正确刷新导致的，这时候需要通过 `vendor/bin/hh-autoload` 重新生成 autoload mapping
