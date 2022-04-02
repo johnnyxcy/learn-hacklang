@@ -2,16 +2,9 @@
 
 namespace LearnHH\MusicApp\Service\DB {
 
-    use namespace HH\Lib\{C};
+    use namespace HH\Lib\C;
 
-    interface IConnectionManager {
-        public function connectAsync(string $dbname): Awaitable<void>;
-        public function disconnect(string $dbname): void;
-        public function isConnected(string $dbname): bool;
-        public function get(string $dbname): \AsyncMysqlConnection;
-    }
-
-    class ConnectionManager implements IConnectionManager {
+    class ConnectionManagerImpl implements IConnectionManager {
         private dict<string, \AsyncMysqlConnection> $connection_mapping;
         public function __construct(
             private int $port,

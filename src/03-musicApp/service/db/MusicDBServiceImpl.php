@@ -1,7 +1,6 @@
 <?hh
 
 namespace LearnHH\MusicApp\Service\DB {
-    use namespace HH\Lib\{C, Vec};
     use type LearnHH\MusicApp\Service\DB\Tables\{
         ISingerSongRelsTableService,
         ISingersTableService,
@@ -11,14 +10,7 @@ namespace LearnHH\MusicApp\Service\DB {
         SongsTableServiceImpl,
     };
 
-    interface IMusicDBService {
-        public function isReadyAsync(): Awaitable<bool>;
-        public function songs(): ISongsTableService;
-        public function singers(): ISingersTableService;
-        public function rels(): ISingerSongRelsTableService;
-    }
-
-    class MusicDBService implements IMusicDBService {
+    class MusicDBServiceImpl implements IMusicDBService {
         private Awaitable<bool> $is_ready;
         private ?ISongsTableService $_songs;
         private ?ISingersTableService $_singer;

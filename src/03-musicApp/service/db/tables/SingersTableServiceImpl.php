@@ -79,6 +79,24 @@ namespace LearnHH\MusicApp\Service\DB\Tables {
             }
         }
 
+        // public async function getMultiAsync(
+        //     vec<string> $singer_uid_vec,
+        // ): Awaitable<Model\ISinger> {
+        //     $query_result_rows = (
+        //         await $this->db->queryf(
+        //             'SELECT UID, Name, Birthday, Description '.
+        //             'FROM music.singers WHERE UID=%s',
+        //             $singer_uid,
+        //         )
+        //     )->mapRows();
+
+        //     if (C\count($query_result_rows) === 1) {
+        //         return static::queryResultToModel($query_result_rows[0]);
+        //     } else {
+        //         throw new \Exception();
+        //     }
+        // }
+
         public async function removeAsync(string $song_uid): Awaitable<bool> {
             try {
                 await $this->db
